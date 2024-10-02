@@ -8,11 +8,19 @@
 
   <br>
   <div>
-    <a href="https://pypi.python.org/pypi/hume"><img src="https://img.shields.io/pypi/v/hume">
-    <a href="https://buildwithfern.com/"><img src="https://img.shields.io/badge/%F0%9F%8C%BF-SDK%20generated%20by%20Fern-brightgreen">     
+    <a href="https://pypi.python.org/pypi/hume"><img src="https://img.shields.io/pypi/v/hume"></a>
+    <a href="https://buildwithfern.com/"><img src="https://img.shields.io/badge/%F0%9F%8C%BF-SDK%20generated%20by%20Fern-brightgreen"></a>
   </div>
   <br>
 </div>
+
+## Migration Guide for Version 0.7.0 and Above
+
+We've released version `0.7.0` of the SDK with significant architectural changes. This update introduces `AsyncHumeClient` and `HumeClient`, improves type safety and async support, and provides more granular configuration options. To help you transition, we've prepared a comprehensive migration guide:
+
+**[View the Migration Guide](https://github.com/HumeAI/hume-python-sdk/wiki/Python-SDK-Migration-Guide)**
+
+Please review this guide before updating, as it covers breaking changes and provides examples for updating your code. Legacy functionality is preserved for backward compatibility. If you have any questions, please open an issue or contact our support team.
 
 ## Documentation
 
@@ -78,7 +86,7 @@ If you want to continue using the legacy SDKs, simply import them from
 the `hume.legacy` module.
 
 ```python
-from hume import HumeVoiceClient, VoiceConfig
+from hume.legacy import HumeVoiceClient, VoiceConfig
 
 client = HumeVoiceClient("<your-api-key>")
 config = client.empathic_voice.configs.get_config_version(
@@ -112,10 +120,10 @@ client.emapthic_voice.         # APIs specific to Empathic Voice
 All errors thrown by the SDK will be subclasses of [`ApiError`](./src/hume/core/api_error.py).
 
 ```python
-import hume
+import hume.client
 
 try:
-  client.text_gen.create_chat_completion(...)
+  client.expression_measurement.batch.get_job_predictions(...)
 except hume.core.ApiError as e: # Handle all errors
   print(e.status_code)
   print(e.body)
@@ -192,13 +200,14 @@ Use the `max_retries` request option to configure this behavior.
 
 ```python
 from hume.client import HumeClient
+from hume.core import RequestOptions
 
 client = HumeClient(...)
 
 # Override retries for a specific method
-client.text_gen.create_chat_completion(..., {
-    max_retries=5
-})
+client.expression_measurement.batch.get_job_predictions(...,
+    request_options=RequestOptions(max_retries=5)
+)
 ```
 
 #### Timeouts
@@ -208,6 +217,7 @@ timeout option at the client or request level.
 
 ```python
 from hume.client import HumeClient
+from hume.core import RequestOptions
 
 client = HumeClient(
     # All timeouts are 20 seconds
@@ -215,9 +225,9 @@ client = HumeClient(
 )
 
 # Override timeout for a specific method
-client.text_gen.create_chat_completion(..., {
-    timeout_in_seconds=20.0
-})
+client.expression_measurement.batch.get_job_predictions(...,
+    request_options=RequestOptions(timeout_in_seconds=20)
+)
 ```
 
 #### Custom HTTP client
@@ -238,18 +248,10 @@ client = HumeClient(
 )
 ```
 
-## Beta Status
-
-This SDK is in beta, and there may be breaking changes between versions without a major
-version update. Therefore, we recommend pinning the package version to a specific version.
-This way, you can install the same version each time without breaking changes.
-
 ## Contributing
 
 While we value open-source contributions to this SDK, this library is generated programmatically.
-Additions made directly to this library would have to be moved over to our generation code,
-otherwise they would be overwritten upon the next generated release. Feel free to open a PR as
-a proof of concept, but know that we will not be able to merge it as-is. We suggest opening
-an issue first to discuss with us!
+
+Additions made directly to this library would have to be moved over to our generation code, otherwise they would be overwritten upon the next generated release. Feel free to open a PR as a proof of concept, but know that we will not be able to merge it as-is. We suggest opening an issue first to discuss with us!
 
 On the other hand, contributions to the README are always very welcome!

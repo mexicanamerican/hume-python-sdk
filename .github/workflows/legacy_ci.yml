@@ -21,10 +21,10 @@ jobs:
           - "3.11"
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Python ${{ matrix.python-version }} Setup
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -38,7 +38,6 @@ jobs:
         shell: bash
         run: |
           pip install poetry
-
           if [ -d /poetryenvs ]; then rm -rf ~/poetryenvs; fi
           poetry config virtualenvs.path ~/poetryenvs
           poetry install
@@ -53,29 +52,34 @@ jobs:
         run: |
           poetry run mypy .
 
-      - name: Run pytest
-        shell: bash
-        env:
-          HUME_DEV_API_KEY: ${{ secrets.HUME_DEV_API_KEY }}
-        run: |
-          poetry run pytest tests/custom/_legacy -m "(not service) and (not microphone)"
-
       - name: Run pydocstyle
         shell: bash
         run: |
           poetry run pydocstyle hume
 
+      - name: Run pytest
+        shell: bash
+        env:
+          HUME_DEV_API_KEY: ${{ secrets.HUME_DEV_API_KEY }}
+        run: |
+          poetry run pytest tests/custom/_legacy --cov=hume --cov-report=html --cov-report=xml --cov-branch -m "(not service) and (not microphone)"
+
       - name: Upload HTML Coverage
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: hume-unit-coverage-html
           path: hume/htmlcov
 
       - name: Upload XML Coverage
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: hume-unit-coverage-xml
           path: hume/coverage.xml
+
+      - name: Check Coverage
+        shell: bash
+        run: |
+          poetry run covcheck coverage.xml --group unit --line 40.0 --branch 20.0
 
   build-service:
     runs-on: ubuntu-latest
@@ -88,10 +92,10 @@ jobs:
           - "3.10"
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Python ${{ matrix.python-version }} Setup
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -105,10 +109,8 @@ jobs:
         shell: bash
         run: |
           pip install poetry
-
           if [ -d /poetryenvs ]; then rm -rf ~/poetryenvs; fi
           poetry config virtualenvs.path ~/poetryenvs
-          poetry install
           poetry install -E legacy
 
       - name: Run pytest
@@ -116,19 +118,24 @@ jobs:
         env:
           HUME_DEV_API_KEY: ${{ secrets.HUME_DEV_API_KEY }}
         run: |
-          poetry run pytest tests/custom/_legacy -m service
+          poetry run pytest tests/custom/_legacy --cov=hume --cov-report=html --cov-report=xml --cov-branch -m service
 
       - name: Upload HTML Coverage
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: hume-service-coverage-html
           path: hume/htmlcov
 
       - name: Upload XML Coverage
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: hume-service-coverage-xml
           path: hume/coverage.xml
+
+      - name: Check Coverage
+        shell: bash
+        run: |
+          poetry run covcheck coverage.xml --group service --line 40.0 --branch 20.0
 
   build-microphone:
     runs-on: ubuntu-latest
@@ -139,10 +146,10 @@ jobs:
           - "3.10"
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Python ${{ matrix.python-version }} Setup
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
 

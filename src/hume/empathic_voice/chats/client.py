@@ -7,6 +7,8 @@ from ...core.pagination import SyncPager
 from ..types.return_chat import ReturnChat
 from ..types.return_paged_chats import ReturnPagedChats
 from ...core.pydantic_utilities import parse_obj_as
+from ..errors.bad_request_error import BadRequestError
+from ..types.error_response import ErrorResponse
 from json.decoder import JSONDecodeError
 from ...core.api_error import ApiError
 from ..types.return_chat_event import ReturnChatEvent
@@ -29,6 +31,8 @@ class ChatsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> SyncPager[ReturnChat]:
         """
+        Fetches a paginated list of **Chats**.
+
         Parameters
         ----------
         page_number : typing.Optional[int]
@@ -99,6 +103,16 @@ class ChatsClient:
                 )
                 _items = _parsed_response.chats_page
                 return SyncPager(has_next=_has_next, items=_items, get_next=_get_next)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -114,6 +128,8 @@ class ChatsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> SyncPager[ReturnChatEvent]:
         """
+        Fetches a paginated list of **Chat** events.
+
         Parameters
         ----------
         id : str
@@ -189,6 +205,16 @@ class ChatsClient:
                 )
                 _items = _parsed_response.events_page
                 return SyncPager(has_next=_has_next, items=_items, get_next=_get_next)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -208,6 +234,8 @@ class AsyncChatsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncPager[ReturnChat]:
         """
+        Fetches a paginated list of **Chats**.
+
         Parameters
         ----------
         page_number : typing.Optional[int]
@@ -286,6 +314,16 @@ class AsyncChatsClient:
                 )
                 _items = _parsed_response.chats_page
                 return AsyncPager(has_next=_has_next, items=_items, get_next=_get_next)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -301,6 +339,8 @@ class AsyncChatsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncPager[ReturnChatEvent]:
         """
+        Fetches a paginated list of **Chat** events.
+
         Parameters
         ----------
         id : str
@@ -384,6 +424,16 @@ class AsyncChatsClient:
                 )
                 _items = _parsed_response.events_page
                 return AsyncPager(has_next=_has_next, items=_items, get_next=_get_next)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "hume"
-version = "0.7.0-rc2"
+version = "0.7.2"
 description = "A Python SDK for Hume AI"
 readme = "README.md"
 authors = []
@@ -50,7 +50,7 @@ packages = [
 ]
 
 [project.urls]
-Documentation = 'hhttps://dev.hume.ai/reference'
+Documentation = 'https://dev.hume.ai'
 Homepage = 'https://www.hume.ai/'
 Repository = 'https://github.com/HumeAI/hume-python-sdk'
 
@@ -59,12 +59,12 @@ python = ">=3.9,<4"
 aiofiles = "^24.1.0"
 eval-type-backport = "^0.2.0"
 httpx = ">=0.21.2"
-jupyter = { version="^1.0.0", optional = true}
+jupyter = { version = "^1.0.0", optional = true}
 pydantic = ">= 1.9.2"
 pydantic-core = "^2.18.2"
-pydub = { version="^0.25.1", optional = true}
-simpleaudio = { version="^1.0.4", optional = true}
-sounddevice = { version="^0.4.6", optional = true}
+pydub = { version = "^0.25.1", optional = true}
+simpleaudio = { version = "^1.0.4", optional = true}
+sounddevice = { version = "^0.4.6", optional = true}
 typing_extensions = ">= 4.0.0"
 websockets = "12.0"
 
@@ -74,7 +74,7 @@ pytest = "^7.4.0"
 pytest-asyncio = "^0.23.5"
 python-dateutil = "^2.9.0"
 types-python-dateutil = "^2.9.0.20240316"
-covcheck = "^0.4.3"
+covcheck = { version = "^0.4.3", extras = ["toml"]}
 pydocstyle = "^6.1.1"
 pydub-stubs = "^0.25.1"
 pylint = "^2.16.2"
@@ -101,5 +101,5 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.extras]
 examples=["jupyter"]
-microphone=["simpleaudio", "sounddevice"]
+microphone=["pydub", "simpleaudio", "sounddevice"]
 legacy=["pydub"]

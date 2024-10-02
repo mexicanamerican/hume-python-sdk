@@ -7,6 +7,8 @@ from ...core.pagination import SyncPager
 from ..types.return_prompt import ReturnPrompt
 from ..types.return_paged_prompts import ReturnPagedPrompts
 from ...core.pydantic_utilities import parse_obj_as
+from ..errors.bad_request_error import BadRequestError
+from ..types.error_response import ErrorResponse
 from json.decoder import JSONDecodeError
 from ...core.api_error import ApiError
 from ...core.jsonable_encoder import jsonable_encoder
@@ -31,6 +33,10 @@ class PromptsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> SyncPager[typing.Optional[ReturnPrompt]]:
         """
+        Fetches a paginated list of **Prompts**.
+
+        See our [prompting guide](/docs/empathic-voice-interface-evi/phone-calling) for tips on crafting your system prompt.
+
         Parameters
         ----------
         page_number : typing.Optional[int]
@@ -105,6 +111,16 @@ class PromptsClient:
                 )
                 _items = _parsed_response.prompts_page
                 return SyncPager(has_next=_has_next, items=_items, get_next=_get_next)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -119,6 +135,10 @@ class PromptsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> typing.Optional[ReturnPrompt]:
         """
+        Creates a **Prompt** that can be added to an [EVI configuration](/reference/empathic-voice-interface-evi/configs/create-config).
+
+        See our [prompting guide](/docs/empathic-voice-interface-evi/phone-calling) for tips on crafting your system prompt.
+
         Parameters
         ----------
         name : str
@@ -174,6 +194,16 @@ class PromptsClient:
                         object_=_response.json(),
                     ),
                 )
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -189,6 +219,10 @@ class PromptsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ReturnPagedPrompts:
         """
+        Fetches a list of a **Prompt's** versions.
+
+        See our [prompting guide](/docs/empathic-voice-interface-evi/phone-calling) for tips on crafting your system prompt.
+
         Parameters
         ----------
         id : str
@@ -245,6 +279,16 @@ class PromptsClient:
                         object_=_response.json(),
                     ),
                 )
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -259,6 +303,10 @@ class PromptsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> typing.Optional[ReturnPrompt]:
         """
+        Updates a **Prompt** by creating a new version of the **Prompt**.
+
+        See our [prompting guide](/docs/empathic-voice-interface-evi/phone-calling) for tips on crafting your system prompt.
+
         Parameters
         ----------
         id : str
@@ -314,6 +362,16 @@ class PromptsClient:
                         object_=_response.json(),
                     ),
                 )
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -321,6 +379,10 @@ class PromptsClient:
 
     def delete_prompt(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
         """
+        Deletes a **Prompt** and its versions.
+
+        See our [prompting guide](/docs/empathic-voice-interface-evi/phone-calling) for tips on crafting your system prompt.
+
         Parameters
         ----------
         id : str
@@ -352,6 +414,16 @@ class PromptsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -359,6 +431,10 @@ class PromptsClient:
 
     def update_prompt_name(self, id: str, *, name: str, request_options: typing.Optional[RequestOptions] = None) -> str:
         """
+        Updates the name of a **Prompt**.
+
+        See our [prompting guide](/docs/empathic-voice-interface-evi/phone-calling) for tips on crafting your system prompt.
+
         Parameters
         ----------
         id : str
@@ -399,6 +475,16 @@ class PromptsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return _response.text  # type: ignore
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -408,6 +494,10 @@ class PromptsClient:
         self, id: str, version: int, *, request_options: typing.Optional[RequestOptions] = None
     ) -> typing.Optional[ReturnPrompt]:
         """
+        Fetches a specified version of a **Prompt**.
+
+        See our [prompting guide](/docs/empathic-voice-interface-evi/phone-calling) for tips on crafting your system prompt.
+
         Parameters
         ----------
         id : str
@@ -416,7 +506,7 @@ class PromptsClient:
         version : int
             Version number for a Prompt.
 
-            Prompts, as well as Configs and Tools, are versioned. This versioning system supports iterative development, allowing you to progressively refine prompts and revert to previous versions if needed.
+            Prompts, Configs, Custom Voices, and Tools are versioned. This versioning system supports iterative development, allowing you to progressively refine prompts and revert to previous versions if needed.
 
             Version numbers are integer values representing different iterations of the Prompt. Each update to the Prompt increments its version number.
 
@@ -454,6 +544,16 @@ class PromptsClient:
                         object_=_response.json(),
                     ),
                 )
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -463,6 +563,10 @@ class PromptsClient:
         self, id: str, version: int, *, request_options: typing.Optional[RequestOptions] = None
     ) -> None:
         """
+        Deletes a specified version of a **Prompt**.
+
+        See our [prompting guide](/docs/empathic-voice-interface-evi/phone-calling) for tips on crafting your system prompt.
+
         Parameters
         ----------
         id : str
@@ -471,7 +575,7 @@ class PromptsClient:
         version : int
             Version number for a Prompt.
 
-            Prompts, as well as Configs and Tools, are versioned. This versioning system supports iterative development, allowing you to progressively refine prompts and revert to previous versions if needed.
+            Prompts, Configs, Custom Voices, and Tools are versioned. This versioning system supports iterative development, allowing you to progressively refine prompts and revert to previous versions if needed.
 
             Version numbers are integer values representing different iterations of the Prompt. Each update to the Prompt increments its version number.
 
@@ -502,6 +606,16 @@ class PromptsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -516,6 +630,10 @@ class PromptsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> typing.Optional[ReturnPrompt]:
         """
+        Updates the description of a **Prompt**.
+
+        See our [prompting guide](/docs/empathic-voice-interface-evi/phone-calling) for tips on crafting your system prompt.
+
         Parameters
         ----------
         id : str
@@ -524,7 +642,7 @@ class PromptsClient:
         version : int
             Version number for a Prompt.
 
-            Prompts, as well as Configs and Tools, are versioned. This versioning system supports iterative development, allowing you to progressively refine prompts and revert to previous versions if needed.
+            Prompts, Configs, Custom Voices, and Tools are versioned. This versioning system supports iterative development, allowing you to progressively refine prompts and revert to previous versions if needed.
 
             Version numbers are integer values representing different iterations of the Prompt. Each update to the Prompt increments its version number.
 
@@ -570,6 +688,16 @@ class PromptsClient:
                         object_=_response.json(),
                     ),
                 )
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -590,6 +718,10 @@ class AsyncPromptsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncPager[typing.Optional[ReturnPrompt]]:
         """
+        Fetches a paginated list of **Prompts**.
+
+        See our [prompting guide](/docs/empathic-voice-interface-evi/phone-calling) for tips on crafting your system prompt.
+
         Parameters
         ----------
         page_number : typing.Optional[int]
@@ -672,6 +804,16 @@ class AsyncPromptsClient:
                 )
                 _items = _parsed_response.prompts_page
                 return AsyncPager(has_next=_has_next, items=_items, get_next=_get_next)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -686,6 +828,10 @@ class AsyncPromptsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> typing.Optional[ReturnPrompt]:
         """
+        Creates a **Prompt** that can be added to an [EVI configuration](/reference/empathic-voice-interface-evi/configs/create-config).
+
+        See our [prompting guide](/docs/empathic-voice-interface-evi/phone-calling) for tips on crafting your system prompt.
+
         Parameters
         ----------
         name : str
@@ -749,6 +895,16 @@ class AsyncPromptsClient:
                         object_=_response.json(),
                     ),
                 )
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -764,6 +920,10 @@ class AsyncPromptsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ReturnPagedPrompts:
         """
+        Fetches a list of a **Prompt's** versions.
+
+        See our [prompting guide](/docs/empathic-voice-interface-evi/phone-calling) for tips on crafting your system prompt.
+
         Parameters
         ----------
         id : str
@@ -828,6 +988,16 @@ class AsyncPromptsClient:
                         object_=_response.json(),
                     ),
                 )
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -842,6 +1012,10 @@ class AsyncPromptsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> typing.Optional[ReturnPrompt]:
         """
+        Updates a **Prompt** by creating a new version of the **Prompt**.
+
+        See our [prompting guide](/docs/empathic-voice-interface-evi/phone-calling) for tips on crafting your system prompt.
+
         Parameters
         ----------
         id : str
@@ -905,6 +1079,16 @@ class AsyncPromptsClient:
                         object_=_response.json(),
                     ),
                 )
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -912,6 +1096,10 @@ class AsyncPromptsClient:
 
     async def delete_prompt(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
         """
+        Deletes a **Prompt** and its versions.
+
+        See our [prompting guide](/docs/empathic-voice-interface-evi/phone-calling) for tips on crafting your system prompt.
+
         Parameters
         ----------
         id : str
@@ -951,6 +1139,16 @@ class AsyncPromptsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -960,6 +1158,10 @@ class AsyncPromptsClient:
         self, id: str, *, name: str, request_options: typing.Optional[RequestOptions] = None
     ) -> str:
         """
+        Updates the name of a **Prompt**.
+
+        See our [prompting guide](/docs/empathic-voice-interface-evi/phone-calling) for tips on crafting your system prompt.
+
         Parameters
         ----------
         id : str
@@ -1008,6 +1210,16 @@ class AsyncPromptsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return _response.text  # type: ignore
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -1017,6 +1229,10 @@ class AsyncPromptsClient:
         self, id: str, version: int, *, request_options: typing.Optional[RequestOptions] = None
     ) -> typing.Optional[ReturnPrompt]:
         """
+        Fetches a specified version of a **Prompt**.
+
+        See our [prompting guide](/docs/empathic-voice-interface-evi/phone-calling) for tips on crafting your system prompt.
+
         Parameters
         ----------
         id : str
@@ -1025,7 +1241,7 @@ class AsyncPromptsClient:
         version : int
             Version number for a Prompt.
 
-            Prompts, as well as Configs and Tools, are versioned. This versioning system supports iterative development, allowing you to progressively refine prompts and revert to previous versions if needed.
+            Prompts, Configs, Custom Voices, and Tools are versioned. This versioning system supports iterative development, allowing you to progressively refine prompts and revert to previous versions if needed.
 
             Version numbers are integer values representing different iterations of the Prompt. Each update to the Prompt increments its version number.
 
@@ -1071,6 +1287,16 @@ class AsyncPromptsClient:
                         object_=_response.json(),
                     ),
                 )
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -1080,6 +1306,10 @@ class AsyncPromptsClient:
         self, id: str, version: int, *, request_options: typing.Optional[RequestOptions] = None
     ) -> None:
         """
+        Deletes a specified version of a **Prompt**.
+
+        See our [prompting guide](/docs/empathic-voice-interface-evi/phone-calling) for tips on crafting your system prompt.
+
         Parameters
         ----------
         id : str
@@ -1088,7 +1318,7 @@ class AsyncPromptsClient:
         version : int
             Version number for a Prompt.
 
-            Prompts, as well as Configs and Tools, are versioned. This versioning system supports iterative development, allowing you to progressively refine prompts and revert to previous versions if needed.
+            Prompts, Configs, Custom Voices, and Tools are versioned. This versioning system supports iterative development, allowing you to progressively refine prompts and revert to previous versions if needed.
 
             Version numbers are integer values representing different iterations of the Prompt. Each update to the Prompt increments its version number.
 
@@ -1127,6 +1357,16 @@ class AsyncPromptsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
@@ -1141,6 +1381,10 @@ class AsyncPromptsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> typing.Optional[ReturnPrompt]:
         """
+        Updates the description of a **Prompt**.
+
+        See our [prompting guide](/docs/empathic-voice-interface-evi/phone-calling) for tips on crafting your system prompt.
+
         Parameters
         ----------
         id : str
@@ -1149,7 +1393,7 @@ class AsyncPromptsClient:
         version : int
             Version number for a Prompt.
 
-            Prompts, as well as Configs and Tools, are versioned. This versioning system supports iterative development, allowing you to progressively refine prompts and revert to previous versions if needed.
+            Prompts, Configs, Custom Voices, and Tools are versioned. This versioning system supports iterative development, allowing you to progressively refine prompts and revert to previous versions if needed.
 
             Version numbers are integer values representing different iterations of the Prompt. Each update to the Prompt increments its version number.
 
@@ -1202,6 +1446,16 @@ class AsyncPromptsClient:
                         type_=typing.Optional[ReturnPrompt],  # type: ignore
                         object_=_response.json(),
                     ),
+                )
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    typing.cast(
+                        ErrorResponse,
+                        parse_obj_as(
+                            type_=ErrorResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
                 )
             _response_json = _response.json()
         except JSONDecodeError:

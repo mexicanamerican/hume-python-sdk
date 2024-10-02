@@ -8,6 +8,13 @@ service:
       path: /v0/evi/prompts
       method: GET
       auth: true
+      docs: >-
+        Fetches a paginated list of **Prompts**.
+
+
+        See our [prompting
+        guide](/docs/empathic-voice-interface-evi/phone-calling) for tips on
+        crafting your system prompt.
       pagination:
         offset: $request.page_number
         results: $response.prompts_page
@@ -48,6 +55,8 @@ service:
       response:
         docs: Success
         type: root.ReturnPagedPrompts
+      errors:
+        - root.BadRequestError
       examples:
         - query-parameters:
             page_number: 0
@@ -92,6 +101,14 @@ service:
       path: /v0/evi/prompts
       method: POST
       auth: true
+      docs: >-
+        Creates a **Prompt** that can be added to an [EVI
+        configuration](/reference/empathic-voice-interface-evi/configs/create-config).
+
+
+        See our [prompting
+        guide](/docs/empathic-voice-interface-evi/phone-calling) for tips on
+        crafting your system prompt.
       display-name: Create prompt
       request:
         name: PostedPrompt
@@ -119,9 +136,12 @@ service:
 
                 For help writing a system prompt, see our [Prompting
                 Guide](/docs/empathic-voice-interface-evi/prompting).
+        content-type: application/json
       response:
         docs: Created
         type: optional<root.ReturnPrompt>
+      errors:
+        - root.BadRequestError
       examples:
         - request:
             name: Weather Assistant Prompt
@@ -151,6 +171,13 @@ service:
       path: /v0/evi/prompts/{id}
       method: GET
       auth: true
+      docs: >-
+        Fetches a list of a **Prompt's** versions.
+
+
+        See our [prompting
+        guide](/docs/empathic-voice-interface-evi/phone-calling) for tips on
+        crafting your system prompt.
       path-parameters:
         id:
           type: string
@@ -189,6 +216,8 @@ service:
       response:
         docs: Success
         type: root.ReturnPagedPrompts
+      errors:
+        - root.BadRequestError
       examples:
         - path-parameters:
             id: af699d45-2985-42cc-91b9-af9e5da3bac5
@@ -216,6 +245,13 @@ service:
       path: /v0/evi/prompts/{id}
       method: POST
       auth: true
+      docs: >-
+        Updates a **Prompt** by creating a new version of the **Prompt**.
+
+
+        See our [prompting
+        guide](/docs/empathic-voice-interface-evi/phone-calling) for tips on
+        crafting your system prompt.
       path-parameters:
         id:
           type: string
@@ -245,9 +281,12 @@ service:
 
                 For help writing a system prompt, see our [Prompting
                 Guide](/docs/empathic-voice-interface-evi/prompting).
+        content-type: application/json
       response:
         docs: Created
         type: optional<root.ReturnPrompt>
+      errors:
+        - root.BadRequestError
       examples:
         - path-parameters:
             id: af699d45-2985-42cc-91b9-af9e5da3bac5
@@ -280,11 +319,20 @@ service:
       path: /v0/evi/prompts/{id}
       method: DELETE
       auth: true
+      docs: >-
+        Deletes a **Prompt** and its versions.
+
+
+        See our [prompting
+        guide](/docs/empathic-voice-interface-evi/phone-calling) for tips on
+        crafting your system prompt.
       path-parameters:
         id:
           type: string
           docs: Identifier for a Prompt. Formatted as a UUID.
       display-name: Delete prompt
+      errors:
+        - root.BadRequestError
       examples:
         - path-parameters:
             id: af699d45-2985-42cc-91b9-af9e5da3bac5
@@ -292,6 +340,13 @@ service:
       path: /v0/evi/prompts/{id}
       method: PATCH
       auth: true
+      docs: >-
+        Updates the name of a **Prompt**.
+
+
+        See our [prompting
+        guide](/docs/empathic-voice-interface-evi/phone-calling) for tips on
+        crafting your system prompt.
       path-parameters:
         id:
           type: string
@@ -304,9 +359,12 @@ service:
             name:
               type: string
               docs: Name applied to all versions of a particular Prompt.
+        content-type: application/json
       response:
         docs: Success
         type: text
+      errors:
+        - root.BadRequestError
       examples:
         - path-parameters:
             id: af699d45-2985-42cc-91b9-af9e5da3bac5
@@ -316,6 +374,13 @@ service:
       path: /v0/evi/prompts/{id}/version/{version}
       method: GET
       auth: true
+      docs: >-
+        Fetches a specified version of a **Prompt**.
+
+
+        See our [prompting
+        guide](/docs/empathic-voice-interface-evi/phone-calling) for tips on
+        crafting your system prompt.
       path-parameters:
         id:
           type: string
@@ -326,7 +391,7 @@ service:
             Version number for a Prompt.
 
 
-            Prompts, as well as Configs and Tools, are versioned. This
+            Prompts, Configs, Custom Voices, and Tools are versioned. This
             versioning system supports iterative development, allowing you to
             progressively refine prompts and revert to previous versions if
             needed.
@@ -339,6 +404,8 @@ service:
       response:
         docs: Success
         type: optional<root.ReturnPrompt>
+      errors:
+        - root.BadRequestError
       examples:
         - path-parameters:
             id: af699d45-2985-42cc-91b9-af9e5da3bac5
@@ -363,6 +430,13 @@ service:
       path: /v0/evi/prompts/{id}/version/{version}
       method: DELETE
       auth: true
+      docs: >-
+        Deletes a specified version of a **Prompt**.
+
+
+        See our [prompting
+        guide](/docs/empathic-voice-interface-evi/phone-calling) for tips on
+        crafting your system prompt.
       path-parameters:
         id:
           type: string
@@ -373,7 +447,7 @@ service:
             Version number for a Prompt.
 
 
-            Prompts, as well as Configs and Tools, are versioned. This
+            Prompts, Configs, Custom Voices, and Tools are versioned. This
             versioning system supports iterative development, allowing you to
             progressively refine prompts and revert to previous versions if
             needed.
@@ -383,6 +457,8 @@ service:
             of the Prompt. Each update to the Prompt increments its version
             number.
       display-name: Delete prompt version
+      errors:
+        - root.BadRequestError
       examples:
         - path-parameters:
             id: af699d45-2985-42cc-91b9-af9e5da3bac5
@@ -391,6 +467,13 @@ service:
       path: /v0/evi/prompts/{id}/version/{version}
       method: PATCH
       auth: true
+      docs: >-
+        Updates the description of a **Prompt**.
+
+
+        See our [prompting
+        guide](/docs/empathic-voice-interface-evi/phone-calling) for tips on
+        crafting your system prompt.
       path-parameters:
         id:
           type: string
@@ -401,7 +484,7 @@ service:
             Version number for a Prompt.
 
 
-            Prompts, as well as Configs and Tools, are versioned. This
+            Prompts, Configs, Custom Voices, and Tools are versioned. This
             versioning system supports iterative development, allowing you to
             progressively refine prompts and revert to previous versions if
             needed.
@@ -418,9 +501,12 @@ service:
             version_description:
               type: optional<string>
               docs: An optional description of the Prompt version.
+        content-type: application/json
       response:
         docs: Success
         type: optional<root.ReturnPrompt>
+      errors:
+        - root.BadRequestError
       examples:
         - path-parameters:
             id: af699d45-2985-42cc-91b9-af9e5da3bac5
@@ -444,4 +530,4 @@ service:
                 conditions, and any weather alerts. Include helpful tips if
                 severe weather is expected.</role>
   source:
-    openapi: ../empathic-voice-interface/stenographer-openapi.json
+    openapi: stenographer-openapi.json
